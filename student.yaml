@@ -1,23 +1,16 @@
 openapi: 3.0.3
 info:
   title: Onboarding - OpenAPI 3.0
-  description: |-
-
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: apiteam@swagger.io
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.11
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
+  description: STD22101
+  version: 1.0.0
 servers:
   - url: https://petstore3.swagger.io/api/v3
+    description: GitHub repo for the API
 tags:
   - name: student
     description: Everything about students
+  - name: teacher
+    description: Everything about teachers and courses they teach
 paths:
   /student:
     put:
@@ -101,6 +94,51 @@ paths:
       responses:
         "200":
           description: Successful operation
+  /teacher:
+    post:
+      tags:
+        - teacher
+      summary: Add a new teacher
+      description: Add a new teacher to the database
+      operationId: addTeacher
+      requestBody:
+        description: Create a new teacher in the database
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Teacher"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+  /teacher/{teacherId}:
+    get:
+      tags:
+        - teacher
+      summary: Find teacher by ID
+      description: Retrieve information about a single teacher
+      operationId: getTeacherById
+      parameters:
+        - name: teacherId
+          in: path
+          description: ID of the teacher to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+        "404":
+          description: Teacher not found
 components:
   schemas:
     Student:
@@ -109,17 +147,52 @@ components:
         id:
           type: integer
           format: int64
-          example: 12345
+          example: STD22101
         name:
           type: string
-          example: Arthur Morgan
+          example: Michel Heather
         age:
           type: integer
-          example: 36
+          example: 18
         email:
           type: string
-          example: arthur.morgan@example.com
+          example: hei.michel.8@gmail.com
       required:
         - name
         - age
         - email
+    Teacher:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Tokimahery Ramarozaka
+        courses:
+          type: array
+          items:
+            type: object
+            properties:
+              course_name:
+                type: string
+                enum:
+                  - PROG1
+                    PROG2
+                    WEB1
+                    DONNÉES1
+              duration:
+                type: string
+                enum:
+                  - 8h
+                    12h
+                    10h
+                    6h
+          required:
+            - course_name
+            - duration
+      required:
+        - name
+        - courses
